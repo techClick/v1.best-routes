@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class GetroutesConfig(AppConfig):
+class GetRoutesConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'getRoutes'
+    name = 'get_routes'
