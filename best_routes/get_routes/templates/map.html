@@ -1,6 +1,60 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- leaflet -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  {% block content %}
   <body>
-    fsngklfn
+    <div id="map" style="height: calc(100svh - 18px); width: calc(100vw - 18px); box-sizing: border-box;"></div>
   </body>
+    <script>
+      var map = L.map("map", {
+        center: [28.03, 1.67],
+        zoom: 5
+      });
+
+      var mytilelayer = L.tileLayer(
+        "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+      ).addTo(map);
+
+      const r = {{body|safe}}.sort((a, b) => a[0] - b[0]);
+      var myLines = [{
+          "type": "LineString",
+          "coordinates": r
+      }];
+
+      console.log(myLines)
+
+
+      // custom polygon to show the country
+      var poly = L.geoJSON(myLines, {
+        style: function (geoJsonFeature) {
+          return {
+            fillOpacity: 0.5,
+            strokeColor: "black",
+            // stroke: false
+          };
+        }
+      }).addTo(map);
+      map.fitBounds(poly.getBounds());
+    </script>
+  {% endblock content %}
 </html>
