@@ -1,48 +1,8 @@
 import requests
 import json
 import os
-
-def get_nodes(source, destination):
-  # Service - 'route', mode of transportation - 'driving', without alternatives
-  url = 'http://router.project-osrm.org/route/v1/driving/{};{}?alternatives=false&annotations=nodes'.format(
-    source, destination
-  )
-  headers = { 'Content-type': 'application/json'}
-
-  try:
-    r = requests.get(url, headers = headers)
-    route_json = r.json()
-    # print(route_json)
-    print("Calling API ...:", r.status_code)
-
-    if ('routes' in route_json):
-      return route_json['routes'][0]['legs'][0]['annotation']['nodes']
-  except:
-    return None
-
-  return None
-
-def get_fuelup_points(coordinates):
-  gallonDistance = 10
-  # max * liters in a gallon
-  miles_per_litre = 10 / 3.785
-  miles_per_node = 0.3
-  fuel_min_limit = 150
-  points = []
-  current_fuel_in_tank = 0
-  max_fuel_in_tank = 500
-
-  for i in range(0, len(coordinates)):
-    if (current_fuel_in_tank <= fuel_min_limit):
-      points.append({
-        'coordinates': coordinates[i]
-      })
-      current_fuel_in_tank = max_fuel_in_tank
-    else:
-      current_fuel_in_tank = current_fuel_in_tank - (miles_per_node * miles_per_litre)
-
-  # print(len(coordinates), len(points), points, len(coordinates) * 0.3)
-  return points
+from .utils_nodes import get_nodes
+from .utils_gas_stations import get_gas_stations
 
 
 def get_coordinates(nodes):
@@ -95,9 +55,14 @@ def get_route(source, destination):
     coordinates.append([entry['lon'], entry['lat']])
 
   coordinates.sort(key=lambda coordinates: coordinates[0])
+  gas_stations = get_gas_stations(coordinates)
+
+  if (not gas_stations['data'] or len(gas_stations['data']) == 0):
+    return { 'isError': 'No points found' }
+
   context = {
     'coordinates': coordinates,
-    'fuelup_points': get_fuelup_points(coordinates)
+    'gas_stations': gas_stations
   }
   
   return context

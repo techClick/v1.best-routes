@@ -41,7 +41,9 @@
             coordinates
         }];
 
-        const points = {{ fuelup_points|safe }}.map((point) => {
+        const points = {{ gas_stations.data|safe }}.map((gas_station_data) => {
+          const { coordinates: coords } = gas_station_data;
+
           return {
             "type": "Feature",
             "properties": {
@@ -51,7 +53,7 @@
             },
             "geometry": {
                 "type": "Point",
-                "coordinates": point.coordinates
+                "coordinates": coords
             }
         }
         })
@@ -61,13 +63,17 @@
         // custom polygon to show the country
         var pointPoly = L.geoJSON(points).addTo(map);
 
-        const features = {{ fuelup_points|safe }}.map((point) => {
+        const features = {{ gas_stations.data|safe }}.map((gas_station_data) => {
+          const { info, coordinates: coords } = gas_station_data;
+          const { name, price, litres_bought } = info
+
           return {
             "type": "Feature",
-            "properties": { "name": "1" },
+            "properties": { name: `(${name.split(' ').splice(0, 2).join(' ').substring(0, 15)}) $${
+              price.toFixed(1)} for ${litres_bought.toFixed(0)}Litres` },
             "geometry": {
               "type": "Point",
-              "coordinates": point.coordinates
+              "coordinates": coords
             }
           }
         })
@@ -89,7 +95,7 @@
             label = String(feature.properties.name)
             return new L.CircleMarker(latlng, {
               radius: 1,
-            }).bindTooltip(label, {permanent: true, opacity: 0.7}).openTooltip();
+            }).bindTooltip(label, {permanent: true, opacity: 0.75}).openTooltip();
             }
           });
         pointLayer.addData(data_points);

@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
-from .utils import get_nodes, get_coordinates, get_route
+from .utils_route import get_route
 from rest_framework.decorators import api_view
 import json
 import os
@@ -21,6 +21,8 @@ def get_map(request):
   # indicate http response status
   # better notification
   # javascript var to const
+  # make code more pythonic
+  # style the gas station points
   # r = get_nodes((-80, 35), (-70, 40))
   source, destination = [request.GET.get('source'), request.GET.get('destination')]
   route = get_route(source, destination)
