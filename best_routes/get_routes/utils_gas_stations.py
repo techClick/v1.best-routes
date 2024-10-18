@@ -3,14 +3,15 @@ import csv
 from operator import itemgetter
 
 def get_gas_stations(coordinates):
-  gallonDistance = 10
-  # miles per gallon / liters in a gallon
-  miles_per_litre = 10 / 3.785
+  litres_per_gallon = 3.785
+  # miles per gallon / liters per gallon
+  miles_per_litre = 10 / litres_per_gallon
   miles_per_coordinate = 0.3
-  fuel_min_limit = 150
+  fuel_min_limit = 20
   gas_stations = []
   current_litres_in_tank = 0
-  max_fuel_in_tank = 500
+  # max gallons in vehicle * litres per gallon 
+  max_litres_in_tank = 50 * litres_per_gallon
   total_price = 0
 
   for i in range(0, len(coordinates)):
@@ -32,21 +33,20 @@ def get_gas_stations(coordinates):
 
         if (len(location_gas_stations) > 0):
           cheapest_gas_station = sorted(location_gas_stations, key=itemgetter(len(location_gas_stations[0]) - 1))[0]
-          print(location, location_gas_stations, cheapest_gas_station[len(cheapest_gas_station) - 1], cheapest_gas_station)
           price = float(cheapest_gas_station[len(cheapest_gas_station) - 1])
 
-          current_litres_to_buy0 = max_fuel_in_tank - current_litres_in_tank
+          current_litres_to_buy0 = max_litres_in_tank - current_litres_in_tank
           current_litres_to_buy = current_litres_to_buy0 if (current_litres_to_buy0 <= 500) else 500
           gas_stations.append({
             'info': {
               'name': cheapest_gas_station[1],
               'price': price * current_litres_to_buy,
-              'litres_bought': current_litres_to_buy
+              'gallons_bought': current_litres_to_buy / litres_per_gallon
             },
             'coordinates': coordinates[i]
           })
           total_price = total_price + (price * current_litres_to_buy)
-          current_litres_in_tank = max_fuel_in_tank
+          current_litres_in_tank = max_litres_in_tank
         else:
           current_litres_in_tank = current_litres_in_tank - (miles_per_coordinate / miles_per_litre)
       else:

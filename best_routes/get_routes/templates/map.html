@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
 
-    <!-- leaflet -->
+    <!-- I use leaflet maps here -->
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"
       integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
@@ -65,12 +65,12 @@
 
         const features = {{ gas_stations.data|safe }}.map((gas_station_data) => {
           const { info, coordinates: coords } = gas_station_data;
-          const { name, price, litres_bought } = info
+          const { name, price, gallons_bought } = info
 
           return {
             "type": "Feature",
             "properties": { name: `(${name.split(' ').splice(0, 2).join(' ').substring(0, 15)}) $${
-              price.toFixed(1)} for ${litres_bought.toFixed(0)}Litres` },
+              parseFloat(price.toFixed(1)).toLocaleString()} for ${gallons_bought.toFixed(0)}Gallons` },
             "geometry": {
               "type": "Point",
               "coordinates": coords
