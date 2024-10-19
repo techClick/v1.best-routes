@@ -1,0 +1,21 @@
+.icon_cont {
+  padding: 0px 5px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.icon_name {
+  font-weight: 800;
+  line-height: 1.75;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.icon_price {
+  font-weight: 600;
+  font-size: 14px;
+  color: green;
+  line-height: 1.2
+}

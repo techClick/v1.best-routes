@@ -2,10 +2,11 @@ import requests
 import json
 import os
 from .utils_nodes import get_nodes, node_interval
-from .utils_gas_stations import get_gas_stations
+from .utils_logistics import get_logistics
 
 
 def get_coordinates(nodes):
+  # This api converts all nodes to lng lat
   url = 'https://overpass-api.de/api/interpreter'
   route_nodes = None
 
@@ -17,7 +18,7 @@ def get_coordinates(nodes):
 
     if (len(nodes) <= node_interval):
       for node_ in nodes:
-        urlBody = add_api_string(urlBody, node)
+        urlBody = add_api_string(urlBody, node_)
     else:
       for i in range(0, len(nodes)):
         if (i % node_interval == 1):
@@ -37,7 +38,7 @@ def get_coordinates(nodes):
 
 def get_route(source, destination):
   if (not source or not destination):
-    return { 'isError': 'Source or destination missing' }
+    return { 'isError': 'Source or destination error' }
 
   file = open('get_routes/mock_coordinates.json', 'r')
   coordinates_src = json.load(file)['elements']
@@ -55,14 +56,14 @@ def get_route(source, destination):
     coordinates.append([entry['lon'], entry['lat']])
 
   coordinates.sort(key=lambda coordinates: coordinates[0])
-  gas_stations_obj = get_gas_stations(coordinates)
+  logistics = get_logistics(coordinates)
 
-  if (not gas_stations_obj['gas_stations'] or len(gas_stations_obj['gas_stations']) == 0):
+  if (not logistics['gas_stations'] or len(logistics['gas_stations']) == 0):
     return { 'isError': 'No gas stations found' }
 
   route = {
     'coordinates': coordinates,
-    'gas_stations_obj': gas_stations_obj
+    'logistics': logistics
   }
   
   return route

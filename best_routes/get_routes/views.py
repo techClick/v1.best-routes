@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from .utils_route import get_route
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view # type: ignore
 import json
 from .utils_params import format_param
 
@@ -15,14 +15,12 @@ def get_routes(request):
   if ('isError' in route):
     return HttpResponse(route['isError'], status = 400)
   else:
-    return HttpResponse('success')
+    route['logistics'].pop('gas_stations', None)
+    return HttpResponse(json.dumps(route['logistics']), status = 200)
 
 @api_view(['GET'])
 def get_map(request):
-  # style the gas station points
   # Test your distance and gas station positioning logic, enhance too
-  # check linter
-  # make miles_per_coordinate global
   source, destination = [request.GET.get('source'), request.GET.get('destination')]
   source = format_param(source)
   destination = format_param(destination)
