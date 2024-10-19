@@ -1,4 +1,4 @@
-from .utils_location import get_location_details
+from .utils_location import get_location_from_coords
 import csv
 from operator import itemgetter
 
@@ -17,7 +17,7 @@ def get_gas_stations(coordinates):
   for i in range(0, len(coordinates)):
     if (current_litres_in_tank <= fuel_min_limit):
       gas_stations_raw = []
-      location = get_location_details(coordinates[i])
+      location = get_location_from_coords(coordinates[i])
 
       with open('get_routes/fuel-prices.csv', newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')

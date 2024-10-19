@@ -1,7 +1,8 @@
 from geopy.geocoders import Nominatim
 
-def get_location_details(lonLat):
-  geolocator = Nominatim(user_agent="myApp")
+geolocator = Nominatim(user_agent = 'get_routes')
+
+def get_location_from_coords(lonLat):
   coordinates = "{}, {}".format(lonLat[1], lonLat[0])
   location = geolocator.reverse(coordinates)
   location_return = None
@@ -12,5 +13,15 @@ def get_location_details(lonLat):
       'town': address['town'],
       'state': address['ISO3166-2-lvl4'].split('-')[1]
     }
+
+  return location_return 
+
+def get_coords_from_location(city):
+  location = geolocator.geocode(city)
+  location_return = None
+
+  print(location)
+  if (location and location.longitude):
+    location_return = ','.join([location.longitude, location.latitude])
 
   return location_return 

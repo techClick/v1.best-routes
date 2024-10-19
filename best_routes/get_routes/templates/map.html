@@ -26,17 +26,17 @@
   </body>
     {% block content %}
       <script>
-        var map = L.map("map", {
+        const map = L.map("map", {
           center: [-85.683029,30.193626],
           zoom: 5
         });
 
-        var mytilelayer = L.tileLayer(
+        const mytilelayer = L.tileLayer(
           "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
         ).addTo(map);
 
         const coordinates = {{ coordinates|safe }};
-        var myLines = [{
+        const myLines = [{
             "type": "LineString",
             coordinates
         }];
@@ -58,8 +58,7 @@
 
         console.log(points)
 
-        // custom polygon to show the country
-        var pointPoly = L.geoJSON(points).addTo(map);
+        const pointPoly = L.geoJSON(points).addTo(map);
 
         const features = {{ gas_stations_obj.gas_stations|safe }}.map((gas_station) => {
           const { info, coordinates: coords } = gas_station;
@@ -76,7 +75,7 @@
           }
         })
 
-        var data_points = {
+        const data_points = {
           "type": "FeatureCollection",
           "name": "test-points-short-named",
           "crs": {
@@ -88,7 +87,7 @@
           features
         };
 
-        var pointLayer = L.geoJSON(null, {
+        const pointLayer = L.geoJSON(null, {
           pointToLayer: function(feature,latlng){
             label = String(feature.properties.name)
             return new L.CircleMarker(latlng, {
@@ -99,7 +98,7 @@
         pointLayer.addData(data_points);
         map.addLayer(pointLayer);
 
-        var poly = L.geoJSON(myLines, {
+        const poly = L.geoJSON(myLines, {
           style: function (geoJsonFeature) {
             return {
               fillOpacity: 0.5,
