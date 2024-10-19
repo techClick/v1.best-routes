@@ -1,4 +1,4 @@
-from .utils_location import get_coords_from_location
+from .location import get_coords_from_location
 
 def is_digit(param):
   return param.replace('.', '', 1).replace('-', '', 1).isdigit()

@@ -22,7 +22,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="{% static '/css/iconstyle.css' %}">
+    <link rel="stylesheet" href="{% static '/iconstyle.css' %}">
   </head>
   <body>
     <div id="map" style="height: calc(100svh - 18px); width: calc(100vw - 18px); box-sizing: border-box;"></div>
@@ -111,11 +111,8 @@
                   "</div>"
               }
             });
-            console.log(latlng)
             return L.marker({ ...latlng, lng: latlng.lng + 0.007 }, {icon: new smallIcon()}).setOpacity(0.7);
-          }/*,      
-          style: getLayerStyle,
-          onEachFeature: setFeatureProperties,*/
+          }      
         });
         pointLayer.addData(data_points);
         map.addLayer(pointLayer);

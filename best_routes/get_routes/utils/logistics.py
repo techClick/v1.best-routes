@@ -1,5 +1,5 @@
-from .utils_location import get_location_from_coords
-from .utils_nodes import node_interval
+from .location import get_location_from_coords
+from .nodes import node_interval
 import csv
 from operator import itemgetter
 
@@ -75,7 +75,7 @@ def get_logistics(coordinates):
 
   logistics = {
     'gas_stations': gas_stations,
-    'total_price': total_price
+    'total_price': '${:,.2f}'.format(round(total_price, 2))
   }
 
   return logistics

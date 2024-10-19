@@ -1,8 +1,8 @@
 import requests
 import json
 import os
-from .utils_nodes import get_nodes, node_interval
-from .utils_logistics import get_logistics
+from .nodes import get_nodes, node_interval
+from .logistics import get_logistics
 
 
 def get_coordinates(nodes):

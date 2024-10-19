@@ -1,8 +1,8 @@
 from django.shortcuts import render, HttpResponse
-from .utils_route import get_route
+from get_routes.utils.route import get_route
 from rest_framework.decorators import api_view # type: ignore
 import json
-from .utils_params import format_param
+from get_routes.utils.params import format_param
 
 @api_view(['POST'])
 def get_routes(request):
@@ -20,7 +20,7 @@ def get_routes(request):
 
 @api_view(['GET'])
 def get_map(request):
-  # Test your distance and gas station positioning logic, enhance too
+  # Test your distance and gas station positioning logic
   source, destination = [request.GET.get('source'), request.GET.get('destination')]
   source = format_param(source)
   destination = format_param(destination)
