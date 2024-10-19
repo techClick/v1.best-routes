@@ -23,6 +23,7 @@ def get_map(request):
   # javascript var to const
   # make code more pythonic
   # style the gas station points
+  # Test your distance and gas station positioning logic, enhance too
   # r = get_nodes((-80, 35), (-70, 40))
   source, destination = [request.GET.get('source'), request.GET.get('destination')]
   route = get_route(source, destination)

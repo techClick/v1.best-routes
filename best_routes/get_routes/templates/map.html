@@ -41,14 +41,12 @@
             coordinates
         }];
 
-        const points = {{ gas_stations.data|safe }}.map((gas_station_data) => {
-          const { coordinates: coords } = gas_station_data;
+        const points = {{ gas_stations_obj.gas_stations|safe }}.map((gas_station) => {
+          const { coordinates: coords } = gas_station;
 
           return {
             "type": "Feature",
             "properties": {
-                "name": "Coors Field",
-                "amenity": "Baseball Stadium",
                 "show_on_map": true
             },
             "geometry": {
@@ -63,14 +61,14 @@
         // custom polygon to show the country
         var pointPoly = L.geoJSON(points).addTo(map);
 
-        const features = {{ gas_stations.data|safe }}.map((gas_station_data) => {
-          const { info, coordinates: coords } = gas_station_data;
+        const features = {{ gas_stations_obj.gas_stations|safe }}.map((gas_station) => {
+          const { info, coordinates: coords } = gas_station;
           const { name, price, gallons_bought } = info
 
           return {
             "type": "Feature",
             "properties": { name: `(${name.split(' ').splice(0, 2).join(' ').substring(0, 15)}) $${
-              parseFloat(price.toFixed(1)).toLocaleString()} for ${gallons_bought.toFixed(0)}Gallons` },
+              parseFloat(price.toFixed(2)).toLocaleString()} for ${gallons_bought.toFixed(0)}Gallons` },
             "geometry": {
               "type": "Point",
               "coordinates": coords

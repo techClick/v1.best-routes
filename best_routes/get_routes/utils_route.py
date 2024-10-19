@@ -55,14 +55,14 @@ def get_route(source, destination):
     coordinates.append([entry['lon'], entry['lat']])
 
   coordinates.sort(key=lambda coordinates: coordinates[0])
-  gas_stations = get_gas_stations(coordinates)
+  gas_stations_obj = get_gas_stations(coordinates)
 
-  if (not gas_stations['data'] or len(gas_stations['data']) == 0):
-    return { 'isError': 'No points found' }
+  if (not gas_stations_obj['gas_stations'] or len(gas_stations_obj['gas_stations']) == 0):
+    return { 'isError': 'No gas stations found' }
 
-  context = {
+  route = {
     'coordinates': coordinates,
-    'gas_stations': gas_stations
+    'gas_stations_obj': gas_stations_obj
   }
   
-  return context
+  return route
