@@ -7,7 +7,7 @@ def get_location_from_coords(lonLat):
   location = geolocator.reverse(coordinates)
   location_return = None
 
-  if (location.raw):
+  if (location.raw and 'town' in location.raw['address']):
     address = location.raw['address']
     location_return = {
       'town': address['town'],

@@ -22,6 +22,7 @@ def get_map(request):
   # style the gas station points
   # Test your distance and gas station positioning logic, enhance too
   # check linter
+  # make miles_per_coordinate global
   source, destination = [request.GET.get('source'), request.GET.get('destination')]
   source = format_param(source)
   destination = format_param(destination)

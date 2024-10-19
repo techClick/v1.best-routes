@@ -1,4 +1,5 @@
 from .utils_location import get_location_from_coords
+from .utils_nodes import node_interval
 import csv
 from operator import itemgetter
 
@@ -6,16 +7,17 @@ def get_gas_stations(coordinates):
   litres_per_gallon = 3.785
   # miles per gallon / liters per gallon
   miles_per_litre = 10 / litres_per_gallon
-  miles_per_coordinate = 0.3
-  fuel_min_limit = 20
-  gas_stations = []
+  # A node covers 0.1 miles in geography
+  miles_per_coordinate = node_interval * 0.1
+  min_litres = 20
   current_litres_in_tank = 0
   # max gallons in vehicle * litres per gallon 
   max_litres_in_tank = 50 * litres_per_gallon
+  gas_stations = []
   total_price = 0
 
   for i in range(0, len(coordinates)):
-    if (current_litres_in_tank <= fuel_min_limit):
+    if (current_litres_in_tank <= min_litres):
       gas_stations_raw = []
       location = get_location_from_coords(coordinates[i])
 
@@ -25,7 +27,7 @@ def get_gas_stations(coordinates):
             gas_stations_raw.append(row)
     
       if (location):
-        # remove header
+        # remove csv header
         gas_stations_raw = gas_stations_raw[1:]
         location_gas_stations = list(filter(lambda station: (
           station[3].strip() in location['town'] and station[4].strip().lower() == location['state'].lower()

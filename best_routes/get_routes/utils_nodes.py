@@ -1,6 +1,8 @@
 import requests
 import json
 
+node_interval = 3
+
 def get_nodes(source, destination):
   # This gets the nodes from openstreetmap, a node is an id for data of a geographic location
   # A node covers 0.1 miles in geography

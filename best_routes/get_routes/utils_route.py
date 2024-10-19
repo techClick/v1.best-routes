@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-from .utils_nodes import get_nodes
+from .utils_nodes import get_nodes, node_interval
 from .utils_gas_stations import get_gas_stations
 
 
@@ -15,12 +15,12 @@ def get_coordinates(nodes):
     def add_api_string(string, node):
       return string + 'node({});\n'.format(node)
 
-    if (len(nodes) <= 3):
+    if (len(nodes) <= node_interval):
       for node_ in nodes:
         urlBody = add_api_string(urlBody, node)
     else:
       for i in range(0, len(nodes)):
-        if (i % 3 == 1):
+        if (i % node_interval == 1):
           urlBody = add_api_string(urlBody, nodes[i])
 
     urlBody = urlBody + ');\n(._;>;);\nout;'
