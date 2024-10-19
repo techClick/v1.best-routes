@@ -6,16 +6,19 @@ def is_digit(param):
 def get_param_type(param):
   param_type = 'city'
 
-  if (param.strip().split(',')[1]):
+  if (param and len(param.strip().split(',')) == 2):
     param_split = param.strip().split(',')
 
-    if (is_digit(param_split[0].strip()) and is_digit(param_split[1].strip()) and len(param_split) == 2):
+    if (is_digit(param_split[0].strip()) and is_digit(param_split[1].strip())):
       param_type = 'coord'
   
   return param_type
 
 def format_param(param):
   new_param = param
+
+  if (not param):
+    return None
 
   if (get_param_type(new_param) == 'city'):
     new_param = get_coords_from_location(new_param)

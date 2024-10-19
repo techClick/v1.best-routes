@@ -17,11 +17,10 @@ def get_location_from_coords(lonLat):
   return location_return 
 
 def get_coords_from_location(city):
-  location = geolocator.geocode(city)
-  location_return = None
+  coords = geolocator.geocode(', '.join([city, 'US']))
+  coords_return = None
 
-  print(location)
-  if (location and location.longitude):
-    location_return = ','.join([location.longitude, location.latitude])
+  if (coords and coords.longitude):
+    coords_return = '{},{}'.format(coords.longitude, coords.latitude)
 
-  return location_return 
+  return coords_return 
