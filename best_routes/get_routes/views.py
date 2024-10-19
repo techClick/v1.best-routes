@@ -12,15 +12,13 @@ def get_routes(request):
   destination = format_param(destination)
   route = get_route(source, destination)
 
-  if (route['isError']):
-    return HttpResponse(route['isError'])
+  if ('isError' in route):
+    return HttpResponse(route['isError'], status = 400)
   else:
     return HttpResponse('success')
 
 @api_view(['GET'])
 def get_map(request):
-  # indicate http response status
-  # make code more pythonic
   # style the gas station points
   # Test your distance and gas station positioning logic, enhance too
   # check linter
@@ -29,9 +27,7 @@ def get_map(request):
   destination = format_param(destination)
   route = get_route(source, destination)
 
-  print(source, destination)
-
   if ('isError' in route):
-    return HttpResponse(route['isError'])
+    return HttpResponse(route['isError'], status = 400)
   else:
     return render(request, 'map.html', route)
