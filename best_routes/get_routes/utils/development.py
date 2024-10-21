@@ -1,24 +1,13 @@
 import csv
 import math
-import time
-from django.shortcuts import render, HttpResponse
-from get_routes.utils.route import get_route
-from rest_framework.decorators import api_view # type: ignore
 import json
-from get_routes.utils.params import format_param
-# import geocoder # type: ignore
 from azure.core.exceptions import HttpResponseError # type: ignore
 from azure.core.credentials import AzureKeyCredential # type: ignore
 from azure.maps.search import MapsSearchClient # type: ignore
 
-file = open('get_routes/locations copy.json', 'r')
-gs_lo = json.load(file)
-
-import os
+gs_lo = []
 
 from azure.core.exceptions import HttpResponseError # type: ignore
-
-subscription_key = '3j2qL8rggPwuhEjdxMjtDpSEFKPbXnx53CKGc8tD3oLOXKhQvXtsJQQJ99AJACYeBjFZx3OZAAAgAZMP17cZ'
 
 gas_stations_raw = []
 with open('get_routes/fuel-prices copy.csv', newline='') as csvfile:
@@ -26,7 +15,6 @@ with open('get_routes/fuel-prices copy.csv', newline='') as csvfile:
   spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
   count = 0
   for row in spamreader:
-    # print('a HERE 1')
     count = count + 1
 
     if (count > 1):
@@ -36,7 +24,7 @@ def geocode_batch():
   fails = 0
   locations = []
 
-  maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+  maps_search_client = MapsSearchClient(credential=AzureKeyCredential('API KEY'))
   ind = -1
   limit = math.floor(len(gas_stations_raw) / 100)
 
@@ -95,29 +83,3 @@ def transfer_stations():
   f = open('get_routes/locations.json', 'w')
   f.write(json.dumps(new_gas_stations))
   f.close()
-
-@api_view(['POST'])
-def get_routes(request):
-  body = json.loads(request.body)
-  source, destination = body.values()
-  source = format_param(source)
-  destination = format_param(destination)
-  route = get_route(source, destination)
-
-  if ('isError' in route):
-    return HttpResponse(route['isError'], status = 400)
-  else:
-    route['logistics'].pop('gas_stations', None)
-    return HttpResponse(json.dumps(route['logistics']), status = 200)
-
-@api_view(['GET'])
-def get_map(request):
-  source, destination = [request.GET.get('source'), request.GET.get('destination')]
-  source = format_param(source)
-  destination = format_param(destination)
-  route = get_route(source, destination)
-
-  if ('isError' in route):
-    return HttpResponse(route['isError'], status = 400)
-  else:
-    return render(request, 'map.html', route)

@@ -45,16 +45,11 @@ def get_route(source, destination):
   if (os.getenv('ENVIRONMENT') == 'production'):
     nodes_src = get_nodes(source, destination)
     nodes = get_nodes_overpass(nodes_src['items'])
-    # coordinates = get_coordinates(source, destination)
   else:
     file = open('get_routes/mock_coordinates.json', 'r')
-    # coordinates = json.load(file)
     file = open('get_routes/mock_nodes.json', 'r')
     nodes = json.load(file)
 
-  # f = open('get_routes/mock_coordinates.json', 'w')
-  # f.write(json.dumps(coordinates))
-  # f.close()
   f = open('get_routes/mock_nodes.json', 'w')
   f.write(json.dumps(nodes))
   f.close()

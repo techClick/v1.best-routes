@@ -18,7 +18,6 @@ def get_nodes(source, destination):
   try:
     r = requests.get(url, headers = headers)
     route_json = r.json()
-    # print(route_json)
     print("Calling API ...:", r.status_code)
 
     if ('routes' in route_json):
