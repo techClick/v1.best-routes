@@ -11,7 +11,6 @@ from azure.core.exceptions import HttpResponseError # type: ignore
 
 gas_stations_raw = []
 with open('get_routes/fuel-prices copy.csv', newline='') as csvfile:
-  print('a HERE')
   spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
   count = 0
   for row in spamreader:
