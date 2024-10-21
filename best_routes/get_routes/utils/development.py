@@ -26,7 +26,7 @@ file.close()
 def geocode_batch():
   fails = 0
 
-  maps_search_client = MapsSearchClient(credential=AzureKeyCredential('3j2qL8rggPwuhEjdxMjtDpSEFKPbXnx53CKGc8tD3oLOXKhQvXtsJQQJ99AJACYeBjFZx3OZAAAgAZMP17cZ'))
+  maps_search_client = MapsSearchClient(credential=AzureKeyCredential('API KEY'))
   limit = math.ceil(len(gas_stations_raw) / 100)
   ind = (100 * (limit - 1)) - 1
 
