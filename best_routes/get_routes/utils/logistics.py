@@ -15,7 +15,7 @@ def get_logistics(coordinates):
   total_price = 0
   miles_per_coordinate = node_interval / 10
   miles_in_tank = 0
-  mileage_to_search_for_gas = 150
+  mileage_to_search_for_gas = 350
   max_mileage_to_drive = max_miles_of_vehicle - mileage_to_search_for_gas
  
   coord_search_range = 0.25
@@ -89,9 +89,7 @@ def get_logistics(coordinates):
           },
           'coordinates': cheapest_gas_station[7]
         })
-        print('LITRES', current_litres_to_buy, miles_in_tank)
       except Exception as e:
-        print('EXCEPT', e)
         gas_station_coord_range = coord_drive_range
 
     if (gas_station_coord_range):
