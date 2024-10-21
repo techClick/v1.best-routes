@@ -46,7 +46,6 @@ def get_route(source, destination):
     nodes_src = get_nodes(source, destination)
     nodes = get_nodes_overpass(nodes_src['items'])
   else:
-    file = open('get_routes/mock_coordinates.json', 'r')
     file = open('get_routes/mock_nodes.json', 'r')
     nodes = json.load(file)
 
@@ -54,12 +53,13 @@ def get_route(source, destination):
   f.write(json.dumps(nodes))
   f.close()
 
+  print(source, destination)
+
   nodes_format = [[node['lon'], node['lat']] for node in nodes]
   route = {
     'coordinates': sorted(nodes_format, key=itemgetter(0)),
     'points': '',
-    'logistics': get_logistics(sorted(nodes_format, key=itemgetter(0))),
-    'geometry': nodes_src['geometry'] 
+    'logistics': get_logistics(sorted(nodes_format, key=itemgetter(0)))
   }
 
   return route

@@ -18,7 +18,7 @@ def get_logistics(coordinates):
   miles_in_tank = 0
   mileage_to_search_for_gas = 150
  
-  search_limit = 0.05
+  search_limit = 0.25
 
   if (coordinates):
     for i in range(0, len(coordinates)):
