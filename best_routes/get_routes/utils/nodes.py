@@ -14,13 +14,9 @@ def get_nodes(source, destination):
   ).format(start, end)
   headers = { 'Content-type': 'application/json'}
 
-  print(url)
   try:
     r = requests.get(url, headers = headers)
     route_json = r.json()
-    f = open('get_routes/check.json', 'w')
-    f.write(json.dumps(route_json))
-    f.close()
     print("Calling API ...:", r.status_code)
 
     if ('routes' in route_json):
