@@ -22,5 +22,8 @@ def format_param(param):
 
   if (get_param_type(new_param) == 'city'):
     new_param = get_coords_from_location(new_param)
-  
-  return new_param
+
+  if (not new_param):
+    return new_param
+
+  return ''.join(new_param.split(' ')).split(',')

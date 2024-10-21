@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Django REST framework 
     'rest_framework',
-    'get_routes'
+    'get_routes',
+    'geopy',
+    'geocoder'
 ]
 
 MIDDLEWARE = [

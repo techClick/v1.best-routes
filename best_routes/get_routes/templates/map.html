@@ -28,9 +28,9 @@
     <div id="map" style="height: calc(100svh - 18px); width: calc(100vw - 18px); box-sizing: border-box;"></div>
   </body>
     {% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-polyline/1.1.1/polyline.min.js"></script>
       <script>
         const map = L.map("map", {
-          center: [-85.683029,30.193626],
           zoom: 5
         });
 
@@ -44,7 +44,7 @@
             coordinates
         }];
 
-        const points = {{ logistics.gas_stations|safe }}.map((gas_station) => {
+        const points1 = {{ logistics.gas_stations|safe }}.map((gas_station) => {
           const { coordinates: coords } = gas_station;
 
           return {
@@ -59,9 +59,9 @@
         }
         })
 
-        console.log(points)
+        console.log(points1)
 
-        const pointPoly = L.geoJSON(points).addTo(map);
+        const pointPoly = L.geoJSON(points1).addTo(map);
 
         const features = {{ logistics.gas_stations|safe }}.map((gas_station) => {
           const { info, coordinates: coords } = gas_station;
@@ -117,16 +117,32 @@
         pointLayer.addData(data_points);
         map.addLayer(pointLayer);
 
-        const poly = L.geoJSON(myLines, {
+        {% comment %} let poly_coordinates = polyline.decode("{{ geometry }}");
+        const poly =  L.polyline(poly_coordinates, { color: "#2a3561", weight: 5 }).addTo(map);
+        map.addLayer(poly); {% endcomment %}
+
+        {% comment %} coords = coordinates.map((c) => [c[1], c[0]])
+        var polygon = L.polygon(coords, {color: 'red', fillOpacity: 0}).addTo(map); {% endcomment %}
+
+        // zoom the map to the polygon
+        // map.fitBounds(polygon.getBounds());
+
+        const poly2 = L.geoJSON(myLines, {
           style: function (geoJsonFeature) {
             return {
-              fillOpacity: 0.5,
+              opacity: 1,
               strokeColor: "black",
               // stroke: false
             };
           }
         }).addTo(map);
-        map.fitBounds(poly.getBounds());
+        map.fitBounds(poly2.getBounds());
+
+        {% comment %} const way_points = coordinates.map((c) => L.latLng(c[1], c[0]))
+        L.Routing({
+          waypoints: way_points,
+          routeWhileDragging: true
+        }).addTo(map); {% endcomment %}
       </script>
     {% endblock content %}
 </html>

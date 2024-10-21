@@ -5,6 +5,7 @@ geolocator = Nominatim(user_agent = 'get_routes')
 def get_location_from_coords(lonLat):
   coordinates = "{}, {}".format(lonLat[1], lonLat[0])
   location = geolocator.reverse(coordinates)
+
   location_return = None
 
   if (location.raw and 'town' in location.raw['address']):

@@ -1,14 +1,15 @@
+from operator import itemgetter
 import requests
 import json
 import os
-from .nodes import get_nodes, node_interval
-from .logistics import get_logistics
 
+from get_routes.utils.nodes import get_nodes, node_interval
+from get_routes.utils.logistics import get_logistics
+from .coordinates import get_coordinates
 
-def get_coordinates(nodes):
+def get_nodes_overpass(nodes):
   # This api converts all nodes to lng lat
   url = 'https://overpass-api.de/api/interpreter'
-  route_nodes = None
 
   try:
     urlBody = 'data=\n[out: json]\n;\n(\n'
@@ -26,7 +27,7 @@ def get_coordinates(nodes):
 
     urlBody = urlBody + ');\n(._;>;);\nout;'
     res = requests.post(url, urlBody)
-    print("Calling API 2 ...:", res.status_code, res.json())
+    print("Calling API Overpass ...:", res.status_code)
     result = res.json()
 
     if ('elements' in result):
@@ -40,30 +41,30 @@ def get_route(source, destination):
   if (not source or not destination):
     return { 'isError': 'Source or destination error' }
 
-  file = open('get_routes/mock_coordinates.json', 'r')
-  coordinates_src = json.load(file)['elements']
 
   if (os.getenv('ENVIRONMENT') == 'production'):
-    nodes = get_nodes(source, destination)
-    coordinates_src = get_coordinates(nodes)
+    nodes_src = get_nodes(source, destination)
+    nodes = get_nodes_overpass(nodes_src['items'])
+    # coordinates = get_coordinates(source, destination)
+  else:
+    file = open('get_routes/mock_coordinates.json', 'r')
+    # coordinates = json.load(file)
+    file = open('get_routes/mock_nodes.json', 'r')
+    nodes = json.load(file)
 
-  if (not coordinates_src):
-    return { 'isError': 'No route data found' }
-  
-  coordinates = []
+  # f = open('get_routes/mock_coordinates.json', 'w')
+  # f.write(json.dumps(coordinates))
+  # f.close()
+  f = open('get_routes/mock_nodes.json', 'w')
+  f.write(json.dumps(nodes))
+  f.close()
 
-  for entry in coordinates_src:
-    coordinates.append([entry['lon'], entry['lat']])
-
-  coordinates.sort(key=lambda coordinates: coordinates[0])
-  logistics = get_logistics(coordinates)
-
-  if (not logistics['gas_stations'] or len(logistics['gas_stations']) == 0):
-    return { 'isError': 'No gas stations found' }
-
+  nodes_format = [[node['lon'], node['lat']] for node in nodes]
   route = {
-    'coordinates': coordinates,
-    'logistics': logistics
+    'coordinates': sorted(nodes_format, key=itemgetter(0)),
+    'points': '',
+    'logistics': get_logistics(sorted(nodes_format, key=itemgetter(0))),
+    'geometry': nodes_src['geometry'] 
   }
-  
+
   return route

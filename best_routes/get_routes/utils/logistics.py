@@ -1,77 +1,66 @@
-from .location import get_location_from_coords
-from .nodes import node_interval
-import csv
+import math
 from operator import itemgetter
+import json
+from get_routes.utils.nodes import node_interval
 
 def get_logistics(coordinates):
+  file = open('get_routes/locations.json', 'r')
+  gas_stations_raw = json.load(file)
   litres_per_gallon = 3.785
   miles_per_gallon = 10
-  miles_per_litre = miles_per_gallon / litres_per_gallon
-  # A node covers 0.1 miles in geography
-  miles_per_coordinate = node_interval * 0.1
-  min_litres = 20
-  current_litres_in_tank = 0
+  liters_per_mile = litres_per_gallon / miles_per_gallon
   max_gallons_in_vehicle = 50
-  max_litres_in_tank = max_gallons_in_vehicle * litres_per_gallon
+  max_miles_of_vehicle = max_gallons_in_vehicle * miles_per_gallon
+  max_litres_in_vehicle = max_gallons_in_vehicle * litres_per_gallon
   gas_stations = []
   total_price = 0
-  location_fail_index = -1
-  location_fail_range = ((max_gallons_in_vehicle * miles_per_gallon) / miles_per_coordinate) / 5
-  location_fail_index = -1
-  gas_stations_raw = []
+  miles_per_coordinate = node_interval / miles_per_gallon
+  miles_in_tank = 0
+  mileage_to_search_for_gas = 150
+ 
+  search_limit = 0.05
 
+  if (coordinates):
+    for i in range(0, len(coordinates)):
+      if (miles_in_tank <= mileage_to_search_for_gas):
+        location_gas_stations = []
+        for gas_station in gas_stations_raw:
+          lng_calc = gas_station[len(gas_station) - 1][0] - coordinates[i][0]
+          lat_calc = gas_station[len(gas_station) - 1][1] - coordinates[i][1]
 
-  with open('get_routes/fuel-prices.csv', newline='') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for row in spamreader:
-        gas_stations_raw.append(row)
+          if (lng_calc < 0):
+            lng_calc = lng_calc * -1
+          if (lat_calc < 0):
+            lat_calc = lat_calc * -1
 
-  # remove csv header
-  gas_stations_raw = gas_stations_raw[1:]
-
-  for i in range(0, len(coordinates)):
-    is_no_location_error = (
-      location_fail_index == -1 or i - location_fail_index > location_fail_range
-    )
-
-    if (current_litres_in_tank <= min_litres and is_no_location_error):
-      location = get_location_from_coords(coordinates[i])
-      location_fail_index = -1
-    
-      if (location):
-        location_gas_stations = list(filter(lambda station: (
-          station[3].strip() in location['town'] and station[4].strip().lower() == location['state'].lower()
-        ), gas_stations_raw))
+          if (lat_calc <= search_limit and lng_calc <= search_limit):
+            location_gas_stations.append(gas_station)
 
         if (len(location_gas_stations) > 0):
           cheapest_gas_station = sorted(location_gas_stations, key=itemgetter(len(location_gas_stations[0]) - 1))[0]
-          price = float(cheapest_gas_station[len(cheapest_gas_station) - 1])
+          price = float(cheapest_gas_station[len(cheapest_gas_station) - 2])
 
-          current_litres_to_buy0 = max_litres_in_tank - current_litres_in_tank
-          current_litres_to_buy = current_litres_to_buy0 if (current_litres_to_buy0 <= 500) else 500
+          current_litres_to_buy0 = (max_miles_of_vehicle - miles_in_tank) * liters_per_mile
+          current_litres_to_buy = current_litres_to_buy0 if (current_litres_to_buy0 <= max_litres_in_vehicle) else (
+            max_litres_in_vehicle
+          )
           gas_stations.append({
             'info': {
               'name': cheapest_gas_station[1],
               'price': price * current_litres_to_buy,
-              'gallons_bought': current_litres_to_buy / litres_per_gallon
+              'gallons_bought': round(current_litres_to_buy / litres_per_gallon)
             },
-            'coordinates': coordinates[i]
+            'coordinates': cheapest_gas_station[len(cheapest_gas_station) - 1]
           })
-          gas_stations_raw = [station for station in gas_stations_raw if not (
+          gas_stations_raw = [station for station in gas_stations_raw if (
             not (station[1] == cheapest_gas_station[1] and station[4] == cheapest_gas_station[4])
           )]
           total_price = total_price + (price * current_litres_to_buy)
-          current_litres_in_tank = max_litres_in_tank
+          miles_in_tank = max_miles_of_vehicle
         else:
-          location_fail_index = i
-          current_litres_in_tank = current_litres_in_tank - (miles_per_coordinate / miles_per_litre)
+          miles_in_tank = miles_in_tank - miles_per_coordinate
       else:
-        location_fail_index = i
-        current_litres_in_tank = current_litres_in_tank - (miles_per_coordinate / miles_per_litre)
-    else:
-      current_litres_in_tank = current_litres_in_tank - (miles_per_coordinate / miles_per_litre)
-
-  # print(len(coordinates), len(gas_stations), gas_stations, len(coordinates) * 0.3)
+        miles_in_tank = miles_in_tank - miles_per_coordinate
 
   logistics = {
     'gas_stations': gas_stations,
