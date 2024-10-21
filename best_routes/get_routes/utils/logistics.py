@@ -17,6 +17,7 @@ def get_logistics(coordinates):
   miles_in_tank = 0
   mileage_to_search_for_gas = 350
   max_mileage_to_drive = max_miles_of_vehicle - mileage_to_search_for_gas
+  coord_drive_range = math.ceil(max_mileage_to_drive / miles_per_coordinate)
   
   lng_sorted_0 = sorted(coordinates, key=lambda coord: float(coord[0]))
   lat_sorted_0 = sorted(coordinates, key=lambda coord: float(coord[1]))
