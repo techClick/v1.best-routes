@@ -17,8 +17,6 @@ def get_logistics(coordinates):
   miles_in_tank = 0
   mileage_to_search_for_gas = 350
   max_mileage_to_drive = max_miles_of_vehicle - mileage_to_search_for_gas
- 
-  coord_search_range = 0.25
   
   lng_sorted_0 = sorted(coordinates, key=lambda coord: float(coord[0]))
   lat_sorted_0 = sorted(coordinates, key=lambda coord: float(coord[1]))
@@ -35,8 +33,7 @@ def get_logistics(coordinates):
   coordinates_travelled = 0
 
   def get_is_gas_station_coord(gas_station, coordinate):
-    # print('COORD', gas_station[7], coordinate)
-    search_range = 0.25
+    search_range = 0.3
     lng_calc = gas_station[7][0] - coordinate[0]
     lat_calc = gas_station[7][1] - coordinate[1]
 
@@ -69,10 +66,12 @@ def get_logistics(coordinates):
     if (len(gas_stations_nearby) > 0):
       cheapest_gas_station = sorted(gas_stations_nearby, key=lambda gas_station: float(gas_station[6]))[0]
 
-      try:
-        gas_station_coord_index = next(
-          i for i, v in enumerate(this_coordinates) if get_is_gas_station_coord(cheapest_gas_station, v)
-        )
+      gas_station_coord_index_arr = [
+        i for i, v in enumerate(this_coordinates) if get_is_gas_station_coord(cheapest_gas_station, v)
+      ]
+
+      if (len(gas_station_coord_index_arr) > 0):
+        gas_station_coord_index = gas_station_coord_index_arr[0]
         coord_drive_range = math.ceil(max_mileage_to_drive / miles_per_coordinate)
         gas_station_coord_range = gas_station_coord_index + coord_drive_range
         price = float(cheapest_gas_station[6])
@@ -89,16 +88,16 @@ def get_logistics(coordinates):
           },
           'coordinates': cheapest_gas_station[7]
         })
-      except Exception as e:
-        gas_station_coord_range = coord_drive_range
+        miles_in_tank = max_miles_of_vehicle
+      else:
+        gas_station_coord_range = len(this_coordinates) + coord_drive_range
 
     if (gas_station_coord_range):
       coordinates_travelled = coordinates_travelled + gas_station_coord_range
-      miles_in_tank = max_miles_of_vehicle - (gas_station_coord_range * miles_per_coordinate)
+      miles_in_tank = miles_in_tank - (gas_station_coord_range * miles_per_coordinate)
     else:
       coordinates_travelled = coordinates_travelled + coord_search_range
-      miles_in_tank = max_miles_of_vehicle - (coord_search_range * miles_per_coordinate)
-    print(miles_in_tank, coordinates_travelled, gas_station_coord_range)
+      miles_in_tank = miles_in_tank - (coord_search_range * miles_per_coordinate)
 
   logistics = {
     'gas_stations': gas_stations,
