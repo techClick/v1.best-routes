@@ -22,13 +22,13 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="{% static '/iconstyle.css' %}">
+    <link rel="stylesheet" href="{% static '/iconstyle.css' %}" />
+    <script type="text/javascript" src="{% static '/decode.js' %}"></script>
   </head>
   <body>
     <div id="map" style="height: calc(100svh - 18px); width: calc(100vw - 18px); box-sizing: border-box;"></div>
   </body>
     {% block content %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-polyline/1.1.1/polyline.min.js"></script>
       <script>
         const map = L.map("map", {
           zoom: 5
@@ -39,10 +39,6 @@
         ).addTo(map);
 
         const coordinates = {{ coordinates|safe }};
-        const myLines = [{
-            "type": "LineString",
-            coordinates
-        }];
 
         const points1 = {{ logistics.gas_stations|safe }}.map((gas_station) => {
           const { coordinates: coords } = gas_station;
@@ -58,8 +54,6 @@
             }
         }
         })
-
-        console.log(points1)
 
         const pointPoly = L.geoJSON(points1).addTo(map);
 
@@ -117,28 +111,10 @@
         pointLayer.addData(data_points);
         map.addLayer(pointLayer);
 
-        {% comment %} coords = coordinates.map((c) => [c[1], c[0]])
-        var polygon = L.polygon(coords, {color: 'red', fillOpacity: 0}).addTo(map); {% endcomment %}
+        var polygon = L.polyline(decode("{{ geometry }}"), {color: 'blue', fillOpacity: 0}).addTo(map);
 
         // zoom the map to the polygon
-        // map.fitBounds(polygon.getBounds());
-
-        const poly2 = L.geoJSON(myLines, {
-          style: function (geoJsonFeature) {
-            return {
-              opacity: 1,
-              strokeColor: "black",
-              // stroke: false
-            };
-          }
-        }).addTo(map);
-        map.fitBounds(poly2.getBounds());
-
-        {% comment %} const way_points = coordinates.map((c) => L.latLng(c[1], c[0]))
-        L.Routing({
-          waypoints: way_points,
-          routeWhileDragging: true
-        }).addTo(map); {% endcomment %}
+        map.fitBounds(polygon.getBounds());
       </script>
     {% endblock content %}
 </html>

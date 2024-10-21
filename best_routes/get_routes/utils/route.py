@@ -44,14 +44,15 @@ def get_route(source, destination):
 
   if (os.getenv('ENVIRONMENT') == 'production'):
     nodes_src = get_nodes(source, destination)
-    nodes = get_nodes_overpass(nodes_src['items'])
+    nodes = get_nodes_overpass(nodes_src['nodes'])
+
+    f = open('get_routes/mock_nodes.json', 'w')
+    f.write(json.dumps({ 'nodes': nodes, 'geometry': nodes_src['geometry'] }))
+    f.close()
   else:
     file = open('get_routes/mock_nodes.json', 'r')
-    nodes = json.load(file)
-
-  f = open('get_routes/mock_nodes.json', 'w')
-  f.write(json.dumps(nodes))
-  f.close()
+    nodes_src = json.load(file)
+    nodes = nodes_src['nodes']
 
   print(source, destination)
 
@@ -59,7 +60,8 @@ def get_route(source, destination):
   route = {
     'coordinates': sorted(nodes_format, key=itemgetter(0)),
     'points': '',
-    'logistics': get_logistics(sorted(nodes_format, key=itemgetter(0)))
+    'logistics': get_logistics(sorted(nodes_format, key=itemgetter(0))),
+    'geometry': nodes_src['geometry']
   }
 
   return route

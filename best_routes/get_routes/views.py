@@ -1,6 +1,3 @@
-import csv
-import math
-import time
 from django.shortcuts import render, HttpResponse
 from get_routes.utils.route import get_route
 import json
