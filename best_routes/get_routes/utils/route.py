@@ -29,9 +29,6 @@ def get_nodes_overpass(nodes):
     res = requests.post(url, urlBody)
     print("Calling API Overpass ...:", res.status_code)
     result = res.json()
-    file = open('get_routes/check.json', 'w')
-    file.write(json.dumps(res.json()))
-    file.close()
 
     if ('elements' in result):
       return result['elements']

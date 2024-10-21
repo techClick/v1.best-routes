@@ -111,10 +111,10 @@
         pointLayer.addData(data_points);
         map.addLayer(pointLayer);
 
-        var polygon = L.polyline(decode("{{ geometry }}"), {color: 'blue', fillOpacity: 0}).addTo(map);
+        const poly = L.geoJSON({ type: 'LineString', coordinates }).addTo(map);
 
         // zoom the map to the polygon
-        map.fitBounds(polygon.getBounds());
+        map.fitBounds(poly.getBounds());
       </script>
     {% endblock content %}
 </html>

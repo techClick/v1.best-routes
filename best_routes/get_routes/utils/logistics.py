@@ -89,7 +89,9 @@ def get_logistics(coordinates):
           },
           'coordinates': cheapest_gas_station[7]
         })
+        print('LITRES', current_litres_to_buy, miles_in_tank)
       except Exception as e:
+        print('EXCEPT', e)
         gas_station_coord_range = coord_drive_range
 
     if (gas_station_coord_range):
@@ -98,6 +100,7 @@ def get_logistics(coordinates):
     else:
       coordinates_travelled = coordinates_travelled + coord_search_range
       miles_in_tank = max_miles_of_vehicle - (coord_search_range * miles_per_coordinate)
+    print(miles_in_tank, coordinates_travelled, gas_station_coord_range)
 
   logistics = {
     'gas_stations': gas_stations,
