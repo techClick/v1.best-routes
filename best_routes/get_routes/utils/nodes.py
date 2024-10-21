@@ -28,7 +28,8 @@ def get_nodes(source, destination):
         'geometry': route_json['routes'][0]['geometry'],
         'nodes': route_json['routes'][0]['legs'][0]['annotation']['nodes']
       }
-  except:
+  except Exception as e:
+    print(e)
     return None
 
   return None

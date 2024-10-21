@@ -44,17 +44,22 @@ def get_route(source, destination):
 
   if (os.getenv('ENVIRONMENT') == 'production'):
     nodes_src = get_nodes(source, destination)
-    nodes = get_nodes_overpass(nodes_src['nodes'])
+    nodes = None
 
-    f = open('get_routes/mock_nodes.json', 'w')
-    f.write(json.dumps({ 'nodes': nodes, 'geometry': nodes_src['geometry'] }))
-    f.close()
+    if (nodes_src):
+      nodes = get_nodes_overpass(nodes_src['nodes'])
+
+      file = open('get_routes/mock_nodes.json', 'w')
+      file.write(json.dumps({ 'nodes': nodes, 'geometry': nodes_src['geometry'] }))
+      file.close()
   else:
     file = open('get_routes/mock_nodes.json', 'r')
     nodes_src = json.load(file)
+    file.close()
     nodes = nodes_src['nodes']
 
-  print(source, destination)
+  if (not nodes):
+    return { 'isError': 'Max API tries exceeded, please try later' }
 
   nodes_format = [[node['lon'], node['lat']] for node in nodes]
   route = {

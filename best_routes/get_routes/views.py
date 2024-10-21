@@ -12,12 +12,13 @@ def get_routes(request):
     source = format_param(source)
     destination = format_param(destination)
     route = get_route(source, destination)
-
     if ('isError' in route):
       return HttpResponse(route['isError'], status = 400)
     else:
       route['logistics'].pop('gas_stations', None)
       return HttpResponse(json.dumps(route['logistics']), status = 200)
+  else:
+    return HttpResponse('Wrong HTTP method', status = 400)
 
 @csrf_exempt
 def get_map(request):
@@ -31,3 +32,5 @@ def get_map(request):
       return HttpResponse(route['isError'], status = 400)
     else:
       return render(request, 'map.html', route)
+  else:
+    return HttpResponse('Wrong HTTP method', status = 400)

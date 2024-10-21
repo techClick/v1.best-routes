@@ -10,7 +10,7 @@ gs_lo = []
 from azure.core.exceptions import HttpResponseError # type: ignore
 
 gas_stations_raw = []
-with open('get_routes/fuel-prices copy.csv', newline='') as csvfile:
+with open('get_routes/fuel-prices.csv', newline='') as csvfile:
   spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
   count = 0
   for row in spamreader:
@@ -19,18 +19,24 @@ with open('get_routes/fuel-prices copy.csv', newline='') as csvfile:
     if (count > 1):
       gas_stations_raw.append(row)
 
+file = open('get_routes/locations.json', 'r')
+gas_stations = json.load(file)
+file.close()
+
 def geocode_batch():
   fails = 0
-  locations = []
 
-  maps_search_client = MapsSearchClient(credential=AzureKeyCredential('API KEY'))
-  ind = -1
-  limit = math.floor(len(gas_stations_raw) / 100)
+  maps_search_client = MapsSearchClient(credential=AzureKeyCredential('3j2qL8rggPwuhEjdxMjtDpSEFKPbXnx53CKGc8tD3oLOXKhQvXtsJQQJ99AJACYeBjFZx3OZAAAgAZMP17cZ'))
+  limit = math.ceil(len(gas_stations_raw) / 100)
+  ind = (100 * (limit - 1)) - 1
 
   try:
     for i in range(0, limit):
       start = i * 100
       new_gas_stations = gas_stations_raw[start:start + 100]
+
+      if (i < limit - 1):
+        continue
 
       batch_items = [
         {
@@ -55,18 +61,19 @@ def geocode_batch():
 
         coordinates = item['features'][0]['geometry']['coordinates']
         longitude, latitude = coordinates
-        #print(longitude, latitude)
-        locations.append({ 'lngLat': [longitude, latitude], 'id': ind })
+        this_gas_station = gas_stations_raw[ind]
+        this_gas_station.append([longitude, latitude])
+        gas_stations.append(this_gas_station)
         print({ 'lngLat': [longitude, latitude], 'id': ind })
-        print('{}/{}'.format(len(locations), len(gas_stations_raw)), '{} fails'.format(fails))
+        print('{}/{}'.format(ind, len(gas_stations_raw)), '{} fails'.format(fails))
 
   except HttpResponseError as exception:
     if exception.error is not None:
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
 
-  f = open('get_routes/fuel-prices.json', 'w')
-  f.write(json.dumps(locations))
+  f = open('get_routes/locations.json', 'w')
+  f.write(json.dumps(gas_stations))
   f.close()
 
 def transfer_stations():
