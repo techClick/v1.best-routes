@@ -98,8 +98,8 @@ def get_logistics(coordinates):
       else:
         gas_station_coord_range = len(this_coordinates) + coord_search_range
 
-    if (gas_station_coord_range):
       coordinates_travelled = coordinates_travelled + gas_station_coord_range
+      miles_in_tank = miles_in_tank - (coord_search_range * miles_per_coordinate)
     else:
       coordinates_travelled = coordinates_travelled + coord_search_range
       miles_in_tank = miles_in_tank - (coord_search_range * miles_per_coordinate)
