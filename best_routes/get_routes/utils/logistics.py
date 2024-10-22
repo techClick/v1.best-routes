@@ -93,7 +93,7 @@ def get_logistics(coordinates):
           'coordinates': gas_station_coord
         })
         miles_in_tank = max_miles_of_vehicle
-        total_price = total_price + price
+        total_price = total_price + (price * current_litres_to_buy)
       else:
         gas_station_coord_range = len(this_coordinates) + coord_search_range
 
