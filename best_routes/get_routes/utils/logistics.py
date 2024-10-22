@@ -77,7 +77,7 @@ def get_logistics(coordinates):
         coord_drive_range = math.ceil(max_mileage_to_drive / miles_per_coordinate)
         gas_station_coord_range = gas_station_coord_index + coord_drive_range
         price = float(cheapest_gas_station[6])
-        miles_in_tank = miles_in_tank - (gas_station_coord_index * miles_per_coordinate)
+        miles_in_tank = miles_in_tank - (gas_station_coord_range * miles_per_coordinate)
         current_litres_to_buy0 = (max_miles_of_vehicle - miles_in_tank) * liters_per_mile
         current_litres_to_buy = current_litres_to_buy0 if (current_litres_to_buy0 <= max_litres_in_vehicle) else (
           max_litres_in_vehicle
@@ -97,7 +97,6 @@ def get_logistics(coordinates):
 
     if (gas_station_coord_range):
       coordinates_travelled = coordinates_travelled + gas_station_coord_range
-      miles_in_tank = miles_in_tank - (gas_station_coord_range * miles_per_coordinate)
     else:
       coordinates_travelled = coordinates_travelled + coord_search_range
       miles_in_tank = miles_in_tank - (coord_search_range * miles_per_coordinate)
