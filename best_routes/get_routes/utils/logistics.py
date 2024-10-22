@@ -50,10 +50,6 @@ def get_logistics(coordinates):
     cheapest_gas_station = None
     coord_search_range = math.ceil(mileage_to_search_for_gas / miles_per_coordinate)
     this_coordinates = coordinates[coordinates_travelled:coordinates_travelled + coord_search_range]
-    lines.append({
-      'type': 'LineString',
-      'coordinates': this_coordinates
-    })
 
     lng_sorted_0 = sorted(this_coordinates, key=lambda coord: float(coord[0]))
     lat_sorted_0 = sorted(this_coordinates, key=lambda coord: float(coord[1]))
@@ -90,14 +86,14 @@ def get_logistics(coordinates):
         gas_stations.append({
           'info': {
             'name': cheapest_gas_station[1],
-            'price': miles_in_tank, # price * current_litres_to_buy,
+            'price': price * current_litres_to_buy,
             'gallons_bought': round(current_litres_to_buy / litres_per_gallon)
           },
           'coordinates': cheapest_gas_station[7]
         })
         miles_in_tank = max_miles_of_vehicle
       else:
-        gas_station_coord_range = len(this_coordinates) + coord_drive_range
+        gas_station_coord_range = len(this_coordinates) + coord_search_range
 
     if (gas_station_coord_range):
       coordinates_travelled = coordinates_travelled + gas_station_coord_range

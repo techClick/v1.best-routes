@@ -112,7 +112,9 @@
         map.addLayer(pointLayer);
 
         const poly = L.geoJSON({ type: 'LineString', coordinates }).addTo(map);
-        // const poly = L.geoJSON({{ search_lines|safe }}).addTo(map);
+        const poly2 = L.geoJSON({{ logistics.search_lines|safe }}, {
+          style: { color: 'red' }
+        }).addTo(map);
 
         // zoom the map to the polygon
         map.fitBounds(poly.getBounds());
