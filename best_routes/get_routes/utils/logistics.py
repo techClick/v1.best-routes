@@ -49,7 +49,7 @@ def get_logistics(coordinates):
   while (coordinates_travelled < len(coordinates)):
     coord_search_range = math.ceil(mileage_to_search_for_gas / miles_per_coordinate)
     if (coordinates_travelled == 0):
-      coord_search_range = 1
+      coord_search_range = 10
 
     cheapest_gas_station = None
     this_coordinates = coordinates[coordinates_travelled:coordinates_travelled + coord_search_range]
@@ -59,7 +59,7 @@ def get_logistics(coordinates):
     lng_sorted = sorted([lng_sorted_0[0][0], lng_sorted_0[len(lng_sorted_0) - 1][0]], key=lambda coord: coord)
     lat_sorted = sorted([lat_sorted_0[0][1], lat_sorted_0[len(lng_sorted_0) - 1][1]], key=lambda coord: coord)
 
-    increment = 0.35 if coordinates_travelled == 0 else 0
+    increment = 1 if coordinates_travelled == 0 else 0
     bounding_box = [
       [lng_sorted[0] - increment, lng_sorted[1] + increment],
       [lat_sorted[0] - increment, lat_sorted[1] + increment]
