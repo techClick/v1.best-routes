@@ -68,12 +68,13 @@ def get_logistics(coordinates):
     if (len(gas_stations_nearby) > 0):
       cheapest_gas_station = sorted(gas_stations_nearby, key=lambda gas_station: float(gas_station[6]))[0]
 
-      gas_station_coord_index_arr = [
-        i for i, v in enumerate(this_coordinates) if get_is_gas_station_coord(cheapest_gas_station, v)
+      gas_station_coord_index_src = [
+        [i, v] for i, v in enumerate(this_coordinates) if get_is_gas_station_coord(cheapest_gas_station, v)
       ]
-
-      if (len(gas_station_coord_index_arr) > 0):
-        gas_station_coord_index = gas_station_coord_index_arr[0]
+      if (len(gas_station_coord_index_src) > 0):
+        gas_station_coord_index = gas_station_coord_index_src[0][0]
+        gas_station_coord = gas_station_coord_index_src[0][1]
+        gas_station_coord_index = gas_station_coord_index
         coord_drive_range = math.ceil(max_mileage_to_drive / miles_per_coordinate)
         gas_station_coord_range = gas_station_coord_index + coord_drive_range
         price = float(cheapest_gas_station[6])
@@ -89,9 +90,10 @@ def get_logistics(coordinates):
             'price': price * current_litres_to_buy,
             'gallons_bought': round(current_litres_to_buy / litres_per_gallon)
           },
-          'coordinates': cheapest_gas_station[7]
+          'coordinates': gas_station_coord
         })
         miles_in_tank = max_miles_of_vehicle
+        total_price = total_price + price
       else:
         gas_station_coord_range = len(this_coordinates) + coord_search_range
 
