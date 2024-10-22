@@ -91,7 +91,7 @@
           pointToLayer: function(feature, latlng) {
             var smallIcon = L.DivIcon.extend({
               options: {
-                iconSize: [140, 57],
+                iconSize: [140, 41],
                 html: "<div class='icon_cont'>" +
                     "<div class='icon_name'>" +
                       feature.properties.name +
@@ -99,9 +99,9 @@
                     "<div class='icon_price'>" +
                       feature.properties.price +
                     "</div>" +
-                    "<div>" +
+                    {% comment %} "<div>" +
                       feature.properties.gallons +
-                    "</div>" +
+                    "</div>" + {% endcomment %}
                   "</div>"
               }
             });
