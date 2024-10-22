@@ -20,8 +20,11 @@ def format_param(param):
   if (not param):
     return None
 
-  if (get_param_type(new_param) == 'city'):
-    new_param = get_coords_from_location(new_param)
+  try:
+    if (get_param_type(new_param) == 'city'):
+      new_param = get_coords_from_location(new_param)
+  except:
+    new_param = 'error api'
 
   if (not new_param):
     return new_param
