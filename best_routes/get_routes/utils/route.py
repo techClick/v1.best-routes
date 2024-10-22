@@ -82,4 +82,4 @@ def get_route(source, destination):
 
   return route
 
-get_route('test', 'test')
+# get_route('test', 'test')
