@@ -91,7 +91,7 @@
           pointToLayer: function(feature, latlng) {
             var smallIcon = L.DivIcon.extend({
               options: {
-                iconSize: [140, 41],
+                iconSize: [140, 57],
                 html: "<div class='icon_cont'>" +
                     "<div class='icon_name'>" +
                       feature.properties.name +
@@ -99,9 +99,9 @@
                     "<div class='icon_price'>" +
                       feature.properties.price +
                     "</div>" +
-                    {% comment %} "<div>" +
+                    "<div>" +
                       feature.properties.gallons +
-                    "</div>" + {% endcomment %}
+                    "</div>" +
                   "</div>"
               }
             });
@@ -112,6 +112,7 @@
         map.addLayer(pointLayer);
 
         const poly = L.geoJSON({ type: 'LineString', coordinates }).addTo(map);
+        // const poly = L.geoJSON({{ search_lines|safe }}).addTo(map);
 
         // zoom the map to the polygon
         map.fitBounds(poly.getBounds());

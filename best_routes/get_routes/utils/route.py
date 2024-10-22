@@ -76,7 +76,7 @@ def get_route(source, destination):
   route = {
     'coordinates': coordinates,
     'points': '',
-    'logistics': get_logistics(sorted(nodes_format, key=itemgetter(0))),
+    'logistics': get_logistics(sorted(coordinates)),
     'geometry': nodes_src['geometry']
   }
 

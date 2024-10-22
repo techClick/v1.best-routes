@@ -45,10 +45,15 @@ def get_logistics(coordinates):
 
     return lat_calc <= search_range and lng_calc <= search_range
 
+  lines = []
   while (coordinates_travelled < len(coordinates)):
     cheapest_gas_station = None
     coord_search_range = math.ceil(mileage_to_search_for_gas / miles_per_coordinate)
     this_coordinates = coordinates[coordinates_travelled:coordinates_travelled + coord_search_range]
+    lines.append({
+      'type': 'LineString',
+      'coordinates': this_coordinates
+    })
 
     lng_sorted_0 = sorted(this_coordinates, key=lambda coord: float(coord[0]))
     lat_sorted_0 = sorted(this_coordinates, key=lambda coord: float(coord[1]))
@@ -76,6 +81,7 @@ def get_logistics(coordinates):
         coord_drive_range = math.ceil(max_mileage_to_drive / miles_per_coordinate)
         gas_station_coord_range = gas_station_coord_index + coord_drive_range
         price = float(cheapest_gas_station[6])
+        miles_in_tank = miles_in_tank - (gas_station_coord_index * miles_per_coordinate)
         current_litres_to_buy0 = (max_miles_of_vehicle - miles_in_tank) * liters_per_mile
         current_litres_to_buy = current_litres_to_buy0 if (current_litres_to_buy0 <= max_litres_in_vehicle) else (
           max_litres_in_vehicle
@@ -84,7 +90,7 @@ def get_logistics(coordinates):
         gas_stations.append({
           'info': {
             'name': cheapest_gas_station[1],
-            'price': price * current_litres_to_buy,
+            'price': miles_in_tank, # price * current_litres_to_buy,
             'gallons_bought': round(current_litres_to_buy / litres_per_gallon)
           },
           'coordinates': cheapest_gas_station[7]
@@ -95,14 +101,19 @@ def get_logistics(coordinates):
 
     if (gas_station_coord_range):
       coordinates_travelled = coordinates_travelled + gas_station_coord_range
+      print('FOUND', cheapest_gas_station[1], gas_station_coord_index, gas_station_coord_range)
       miles_in_tank = miles_in_tank - (gas_station_coord_range * miles_per_coordinate)
+      print(miles_in_tank)
     else:
       coordinates_travelled = coordinates_travelled + coord_search_range
+      print('NOT FOUND', cheapest_gas_station[1], miles_in_tank)
       miles_in_tank = miles_in_tank - (coord_search_range * miles_per_coordinate)
+      print(miles_in_tank)
 
   logistics = {
     'gas_stations': gas_stations,
-    'total_price': '${:,.2f}'.format(round(total_price, 2))
+    'total_price': '${:,.2f}'.format(round(total_price, 2)),
+    'search_lines': lines
   }
 
   return logistics
