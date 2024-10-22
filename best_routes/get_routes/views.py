@@ -11,7 +11,6 @@ def get_routes(request):
     source, destination = body.values()
     source = format_param(source)
 
-    # Nominatim geocode api usage limit
     if (source == 'error api'):
       return HttpResponse('City geocode API max tries exceeded, please use longitude and latitude', status = 500)
 
@@ -32,7 +31,7 @@ def get_map(request):
     source, destination = [request.GET.get('source'), request.GET.get('destination')]
     source = format_param(source)
 
-    if (source.lower() == 'error api'):
+    if (source == 'error api'):
       return HttpResponse('City geocode API max tries exceeded, please use longitude and latitude', status = 500)
 
     destination = format_param(destination)
