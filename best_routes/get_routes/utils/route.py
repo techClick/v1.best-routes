@@ -62,8 +62,19 @@ def get_route(source, destination):
     return { 'isError': 'Max API tries exceeded, please try later' }
 
   nodes_format = [[node['lon'], node['lat']] for node in nodes]
+  coordinates = sorted(nodes_format, key=itemgetter(0))
+  
+  lng_sorted_0 = sorted(coordinates, key=lambda coord: float(coord[0]))
+  lat_sorted_0 = sorted(coordinates, key=lambda coord: float(coord[1]))
+  lng_sorted = sorted([lng_sorted_0[0][0], lng_sorted_0[len(lng_sorted_0) - 1][0]], key=lambda coord: coord)
+  lat_sorted = sorted([lat_sorted_0[0][1], lat_sorted_0[len(lng_sorted_0) - 1][1]], key=lambda coord: coord)
+  all_bounding_box = [[lng_sorted[0], lng_sorted[1]], [lat_sorted[0], lat_sorted[1]]]
+
+  if (all_bounding_box[1][1] - all_bounding_box[1][0] > all_bounding_box[0][1] - all_bounding_box[0][0]):
+    coordinates = sorted(nodes_format, key=itemgetter(1))
+
   route = {
-    'coordinates': sorted(nodes_format, key=itemgetter(0)),
+    'coordinates': coordinates,
     'points': '',
     'logistics': get_logistics(sorted(nodes_format, key=itemgetter(0))),
     'geometry': nodes_src['geometry']
