@@ -33,17 +33,17 @@ def get_logistics(coordinates):
 
   coordinates_travelled = 0
 
-  def get_is_gas_station_coord(gas_station, coordinate):
-    search_range = 0.6
-    lng_calc = gas_station[7][0] - coordinate[0]
-    lat_calc = gas_station[7][1] - coordinate[1]
-
-    if (lng_calc < 0):
-      lng_calc = lng_calc * -1
-    if (lat_calc < 0):
-      lat_calc = lat_calc * -1
-
-    return lat_calc <= search_range and lng_calc <= search_range
+  def get_gas_station_coord(gas_station, coordinates):
+    get_closest_coord = (
+      lambda g_station,
+      coordinates:min(coordinates,key=lambda x: abs(x[0] - g_station[7][0]) and abs(x[1] - g_station[7][1]))
+    )
+    closest_coord = get_closest_coord(gas_station,coordinates)
+    index = len(coordinates)
+    index = next(
+      i for i, coord in enumerate(coordinates) if coord[0] == closest_coord[0] and coord[1] == closest_coord[1]
+    )
+    return [ closest_coord, index ]
 
   lines = []
   while (coordinates_travelled < len(coordinates)):
@@ -68,13 +68,11 @@ def get_logistics(coordinates):
     if (len(gas_stations_nearby) > 0):
       cheapest_gas_station = sorted(gas_stations_nearby, key=lambda gas_station: float(gas_station[6]))[0]
 
-      gas_station_coord_index_src = [
-        [i, v] for i, v in enumerate(this_coordinates) if get_is_gas_station_coord(cheapest_gas_station, v)
-      ]
+      gas_station_coord_src = get_gas_station_coord(cheapest_gas_station, this_coordinates)
 
-      if (len(gas_station_coord_index_src) > 0):
-        gas_station_coord_index = gas_station_coord_index_src[0][0]
-        gas_station_coord = gas_station_coord_index_src[0][1]
+      if (len(gas_station_coord_src) > 0):
+        gas_station_coord_index = gas_station_coord_src[1]
+        gas_station_coord = gas_station_coord_src[0]
         gas_station_coord_index = gas_station_coord_index
         coord_drive_range = math.ceil(max_mileage_to_drive / miles_per_coordinate)
         gas_station_coord_range = gas_station_coord_index + coord_drive_range
