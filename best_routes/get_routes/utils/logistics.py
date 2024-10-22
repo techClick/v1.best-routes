@@ -34,7 +34,7 @@ def get_logistics(coordinates):
   coordinates_travelled = 0
 
   def get_is_gas_station_coord(gas_station, coordinate):
-    search_range = 0.3
+    search_range = 0.6
     lng_calc = gas_station[7][0] - coordinate[0]
     lat_calc = gas_station[7][1] - coordinate[1]
 
@@ -71,6 +71,7 @@ def get_logistics(coordinates):
       gas_station_coord_index_src = [
         [i, v] for i, v in enumerate(this_coordinates) if get_is_gas_station_coord(cheapest_gas_station, v)
       ]
+
       if (len(gas_station_coord_index_src) > 0):
         gas_station_coord_index = gas_station_coord_index_src[0][0]
         gas_station_coord = gas_station_coord_index_src[0][1]

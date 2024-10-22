@@ -16,6 +16,7 @@ def get_routes(request):
       return HttpResponse(route['isError'], status = 400)
     else:
       route['logistics'].pop('gas_stations', None)
+      route['logistics'].pop('search_lines', None)
       return HttpResponse(json.dumps(route['logistics']), status = 200)
   else:
     return HttpResponse('Wrong HTTP method', status = 400)
