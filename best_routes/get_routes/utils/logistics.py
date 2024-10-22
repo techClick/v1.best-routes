@@ -47,15 +47,23 @@ def get_logistics(coordinates):
 
   lines = []
   while (coordinates_travelled < len(coordinates)):
-    cheapest_gas_station = None
     coord_search_range = math.ceil(mileage_to_search_for_gas / miles_per_coordinate)
+    if (coordinates_travelled == 0):
+      coord_search_range = 1
+
+    cheapest_gas_station = None
     this_coordinates = coordinates[coordinates_travelled:coordinates_travelled + coord_search_range]
 
     lng_sorted_0 = sorted(this_coordinates, key=lambda coord: float(coord[0]))
     lat_sorted_0 = sorted(this_coordinates, key=lambda coord: float(coord[1]))
     lng_sorted = sorted([lng_sorted_0[0][0], lng_sorted_0[len(lng_sorted_0) - 1][0]], key=lambda coord: coord)
     lat_sorted = sorted([lat_sorted_0[0][1], lat_sorted_0[len(lng_sorted_0) - 1][1]], key=lambda coord: coord)
-    bounding_box = [[lng_sorted[0], lng_sorted[1]], [lat_sorted[0], lat_sorted[1]]]
+
+    increment = 0.35 if coordinates_travelled == 0 else 0
+    bounding_box = [
+      [lng_sorted[0] - increment, lng_sorted[1] + increment],
+      [lat_sorted[0] - increment, lat_sorted[1] + increment]
+    ]
 
     gas_stations_nearby = list(filter(lambda gas_station: (
       gas_station[7][0] <= bounding_box[0][1] and gas_station[7][0] >= bounding_box[0][0] and (
@@ -67,35 +75,29 @@ def get_logistics(coordinates):
 
     if (len(gas_stations_nearby) > 0):
       cheapest_gas_station = sorted(gas_stations_nearby, key=lambda gas_station: float(gas_station[6]))[0]
-
       gas_station_coord_src = get_gas_station_coord(cheapest_gas_station, this_coordinates)
+      gas_station_coord_index = gas_station_coord_src[1]
+      gas_station_coord = gas_station_coord_src[0]
+      gas_station_coord_index = gas_station_coord_index
+      coord_drive_range = math.ceil(max_mileage_to_drive / miles_per_coordinate)
+      gas_station_coord_range = gas_station_coord_index + coord_drive_range
+      price = float(cheapest_gas_station[6])
+      miles_in_tank = miles_in_tank - (gas_station_coord_range * miles_per_coordinate)
+      current_litres_to_buy0 = (max_miles_of_vehicle - miles_in_tank) * liters_per_mile
+      current_litres_to_buy = current_litres_to_buy0 if (current_litres_to_buy0 <= max_litres_in_vehicle) else (
+        max_litres_in_vehicle
+      )
 
-      if (len(gas_station_coord_src) > 0):
-        gas_station_coord_index = gas_station_coord_src[1]
-        gas_station_coord = gas_station_coord_src[0]
-        gas_station_coord_index = gas_station_coord_index
-        coord_drive_range = math.ceil(max_mileage_to_drive / miles_per_coordinate)
-        gas_station_coord_range = gas_station_coord_index + coord_drive_range
-        price = float(cheapest_gas_station[6])
-        miles_in_tank = miles_in_tank - (gas_station_coord_range * miles_per_coordinate)
-        current_litres_to_buy0 = (max_miles_of_vehicle - miles_in_tank) * liters_per_mile
-        current_litres_to_buy = current_litres_to_buy0 if (current_litres_to_buy0 <= max_litres_in_vehicle) else (
-          max_litres_in_vehicle
-        )
-
-        gas_stations.append({
-          'info': {
-            'name': cheapest_gas_station[1],
-            'price': price * current_litres_to_buy,
-            'gallons_bought': round(current_litres_to_buy / litres_per_gallon)
-          },
-          'coordinates': gas_station_coord
-        })
-        miles_in_tank = max_miles_of_vehicle
-        total_price = total_price + (price * current_litres_to_buy)
-      else:
-        gas_station_coord_range = len(this_coordinates) + coord_search_range
-
+      gas_stations.append({
+        'info': {
+          'name': cheapest_gas_station[1],
+          'price': price * current_litres_to_buy,
+          'gallons_bought': round(current_litres_to_buy / litres_per_gallon)
+        },
+        'coordinates': gas_station_coord
+      })
+      miles_in_tank = max_miles_of_vehicle
+      total_price = total_price + (price * current_litres_to_buy)
       coordinates_travelled = coordinates_travelled + gas_station_coord_range
     else:
       coordinates_travelled = coordinates_travelled + coord_search_range

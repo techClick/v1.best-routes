@@ -21,9 +21,7 @@ def format_param(param):
     return None
 
   if (get_param_type(new_param) == 'city'):
-    # development print(new_param)
     new_param = get_coords_from_location(new_param)
-    # development print('SECOND', new_param)
 
   if (not new_param):
     return new_param
