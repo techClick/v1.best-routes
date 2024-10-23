@@ -6,6 +6,7 @@ node_interval = 3
 def get_nodes(source, destination):
   # This gets the nodes from openstreetmap, a node is an id for data of a geographic location
   # A node covers 0.1 miles in geography
+  # This file is not used, it turned out to be a slower API comapred to other options
 
   source = '{},{}'.format(source[0], source[1])
   destination = '{},{}'.format(destination[0], destination[1])
