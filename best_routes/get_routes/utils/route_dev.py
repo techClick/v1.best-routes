@@ -43,25 +43,44 @@ def get_route(source, destination):
 
 
   if (os.getenv('ENVIRONMENT') == 'production'):
-    coordinates = get_route_from_azure([source[1], source[0]], [destination[1], destination[0]])
-    file = open('get_routes/mock_nodes.json', 'w')
-    file.write(json.dumps(coordinates))
-    file.close()
+    nodes_src = get_nodes(source, destination)
+    nodes = None
+
+    if (nodes_src):
+      nodes = get_nodes_overpass(nodes_src['nodes'])
+
+      file = open('get_routes/mock_nodes.json', 'w')
+      file.write(json.dumps({ 'nodes': nodes, 'geometry': nodes_src['geometry'] }))
+      file.close()
   else:
     file = open('get_routes/mock_nodes.json', 'r')
-    coordinates = json.load(file)
+    nodes_src = json.load(file)
     file.close()
+    nodes = nodes_src['nodes']
 
-  if (not coordinates):
+  if (not nodes):
     return { 'isError': 'Max API tries exceeded, please try later' }
+
+  # nodes_format = [[node['lon'], node['lat']] for node in nodes]
+  # coordinates = sorted(nodes_format, key=itemgetter(0))
+  
+  # lng_sorted_0 = sorted(coordinates, key=lambda coord: float(coord[0]))
+  # lat_sorted_0 = sorted(coordinates, key=lambda coord: float(coord[1]))
+  # lng_sorted = sorted([lng_sorted_0[0][0], lng_sorted_0[len(lng_sorted_0) - 1][0]], key=lambda coord: coord)
+  # lat_sorted = sorted([lat_sorted_0[0][1], lat_sorted_0[len(lng_sorted_0) - 1][1]], key=lambda coord: coord)
+  # all_bounding_box = [[lng_sorted[0], lng_sorted[1]], [lat_sorted[0], lat_sorted[1]]]
+
+  # if (all_bounding_box[1][1] - all_bounding_box[1][0] > all_bounding_box[0][1] - all_bounding_box[0][0]):
+  #   coordinates = sorted(nodes_format, key=itemgetter(1))
 
   route = {
     'coordinates': coordinates,
     'points': '',
     'logistics': get_logistics(sorted(coordinates)),
-    'geometry': ''
+    'geometry': nodes_src['geometry']
   }
 
   return route
 
 # get_route('test', 'test')
+# get_route_from_azure()

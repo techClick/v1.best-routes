@@ -1,6 +1,6 @@
 import math
 import json
-from get_routes.utils.nodes import node_interval
+from get_routes.utils.coordinates import miles_per_coordinate
 
 def get_logistics(coordinates):
   file = open('get_routes/locations.json', 'r')
@@ -13,7 +13,6 @@ def get_logistics(coordinates):
   max_litres_in_vehicle = max_gallons_in_vehicle * litres_per_gallon
   gas_stations = []
   total_price = 0
-  miles_per_coordinate = node_interval / 10
   miles_in_tank = 0
   mileage_to_search_for_gas = 350
   max_mileage_to_drive = max_miles_of_vehicle - mileage_to_search_for_gas
