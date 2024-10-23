@@ -5,7 +5,6 @@ import os
 
 from get_routes.utils.nodes import get_nodes, node_interval
 from get_routes.utils.logistics import get_logistics
-from .coordinates import get_coordinates
 
 def get_nodes_overpass(nodes):
   # This api converts all nodes to lng lat

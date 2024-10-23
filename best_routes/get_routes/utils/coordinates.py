@@ -1,43 +1,23 @@
-import json
+
 import os
-import requests
+from azure.core.exceptions import HttpResponseError # type: ignore
+from azure.core.credentials import AzureKeyCredential # type: ignore
+from azure.maps.search import MapsSearchClient # type: ignore
 
-node_interval = 3
+def is_digit(param):
+  return param.replace('.', '', 1).replace('-', '', 1).isdigit()
 
-def get_coordinates(source, destination):
-  url = '{}{}'.format(os.getenv('API_URL'), (
-    '/route?points={}%2C{}%7C{}%2C{}&routeType=car'.format(
-      source[1], source[0], destination[1], destination[0]
-    )
-  ))
-  headers = {
-    'Content-type': 'application/json',
-    'x-rapidapi-host': os.getenv('API_HOST'),
-    'x-rapidapi-key': os.getenv('RAPID_API_KEY')
-  }
+subscription_key = os.getenv('AZURE_SUBSCRIPTION_KEY')
+maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
+def geocode(city):
   try:
-    res = requests.get(url, headers = headers)
-    print("Calling API ...:", res.status_code)
-    coordinates_src = json.loads(res.text)
+    result = maps_search_client.get_geocoding(query=city)
+    if result.get('features', False):
+      coordinates = result['features'][0]['geometry']['coordinates']
+      return [coordinates[0], coordinates[1]]
+    else:
+      return 'api error'
 
-    coords = [
-      [
-        coord['coordinate'][1],
-        coord['coordinate'][0],
-        coord['distance_miles']
-      ] for coord in coordinates_src['paths'][0]['instructions']
-    ]
-
-    coordinates = {
-      'coords': coords,
-      'points': coordinates_src['paths'][0]['points'],
-    }
-
-    return coordinates
-  except Exception as error:
-    print('Maptoolkit API Error', error)
-    return {
-      'coords': [],
-      'points': []
-    }
+  except HttpResponseError as exception:
+    return 'api error'
