@@ -6,12 +6,13 @@ node_interval = 3
 def get_nodes(source, destination):
   # This gets the nodes from openstreetmap, a node is an id for data of a geographic location
   # A node covers 0.1 miles in geography
-  start = '{},{}'.format(source[0], source[1])
-  end = '{},{}'.format(destination[0], destination[1])
+
+  source = '{},{}'.format(source[0], source[1])
+  destination = '{},{}'.format(destination[0], destination[1])
 
   url = (
     'http://router.project-osrm.org/route/v1/driving/{};{}?alternatives=false&annotations=nodes'    
-  ).format(start, end)
+  ).format(source, destination)
   headers = { 'Content-type': 'application/json'}
 
   try:
