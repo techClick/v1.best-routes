@@ -12,9 +12,15 @@ def get_routes(request):
     source = format_param(source)
     destination = format_param(destination)
 
-    if (source == 'error api' or destination == 'error api'):
+    if (source == 'error api'):
       return HttpResponse(
-        'Geocode API max tries exceeded, please use longitude and latitude or try different cities',
+        'Geocode API max tries exceeded, please use longitude and latitude or try a different source',
+        status = 500
+      )
+
+    if (destination == 'error api'):
+      return HttpResponse(
+        'Geocode API max tries exceeded, please use longitude and latitude or try a different destination',
         status = 500
       )
 
@@ -36,9 +42,15 @@ def get_map(request):
     source = format_param(source)
     destination = format_param(destination)
 
-    if (source == 'error api' or destination == 'error api'):
+    if (source == 'error api'):
       return HttpResponse(
-        'Geocode API max tries exceeded, please use longitude and latitude or try different cities',
+        'Geocode API max tries exceeded, please use longitude and latitude or try a different source',
+        status = 500
+      )
+
+    if (destination == 'error api'):
+      return HttpResponse(
+        'Geocode API max tries exceeded, please use longitude and latitude or try a different destination',
         status = 500
       )
 
